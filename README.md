@@ -174,7 +174,11 @@ MIT — siehe [LICENSE](LICENSE).
 MadMax Plotter und Chia sind eigenständige Projekte mit eigenen Lizenzen. Dieses
 Programm ruft sie lediglich auf und ist mit ihnen nicht offiziell verbunden.
 
-## Links
+<img width="1351" height="1548" alt="520957695-336b7cc4-5e14-4225-a341-5f5e83490aad" src="https://github.com/user-attachments/assets/b82030d3-ae0d-46a1-babc-6441758edd24" />
+<img width="1345" height="1548" alt="520935136-a2596ee1-f7dd-4165-803c-4032ad079f70" src="https://github.com/user-attachments/assets/dc7f55ec-a0b8-4365-8800-aa169d6ad800" />
+<img width="1354" height="1556" alt="520958241-f2ce2edb-817f-4df9-9c9b-7f3a45806ffb" src="https://github.com/user-attachments/assets/593efa1e-230c-4f78-bcfc-fffdf6f47e1d" />
+
+
 
 - [MadMax Chia Plotter](https://github.com/madMAx43v3r/chia-plotter)
 - [Chia Network](https://www.chia.net/)
