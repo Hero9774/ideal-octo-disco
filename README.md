@@ -2,12 +2,13 @@
 
 Eine grafische Oberfläche für den
 [MadMax Chia Plotter](https://github.com/madMAx43v3r/chia-plotter) — geschrieben
-in Python mit Tkinter, ohne externe Abhängigkeiten.
+in Python mit Tkinter, ohne externe Abhängigkeiten. Läuft unter **Windows und
+Linux**.
 
 Der MadMax-Plotter ist ein Kommandozeilenwerkzeug mit rund zwei Dutzend
 Parametern. Diese GUI nimmt einem das Merken der Flags ab, validiert die
-Eingaben vor dem Start, zeigt den Fortschritt an und speichert
-Konfigurationen als XML.
+Eingaben vor dem Start, zeigt den Fortschritt an und speichert Konfigurationen
+als XML.
 
 ## Funktionen
 
@@ -19,6 +20,7 @@ Konfigurationen als XML.
 
 **Automatische Erkennung**
 - Findet die Binaries `chia_plot` und `chia` selbstständig über `PATH`
+- Kennt zusätzlich die üblichen Installationsorte beider Systeme
 - Liest Farmer Key und Pool Public Key aus `chia keys show`
 - Ermittelt die Pool Contract Address aus `chia plotnft show`
 
@@ -30,13 +32,14 @@ Konfigurationen als XML.
 Das erspart Fehlversuche, die sonst erst nach Minuten Laufzeit auffallen.
 
 **Plot-Prüfung**
-- Optionale automatische Prüfung nach jedem erstellten Plot (`chia plots check -n 30`)
+- Optionale automatische Prüfung nach jedem erstellten Plot
+  (`chia plots check -n 30`)
 - Manuelle Prüfung einzelner Dateien oder ganzer Verzeichnisse
 
 **Konfiguration**
 - Alle Einstellungen als XML speichern und laden
-- Berechnet aus dem freien Speicher im Zielverzeichnis, wie viele k32-Plots
-  noch hineinpassen
+- Berechnet aus dem freien Speicher im Zielverzeichnis, wie viele Plots der
+  gewählten K-Größe noch hineinpassen
 
 **Oberfläche**
 - Drei Reiter: Plots & Keys, Parameter, Pfade & Tools
@@ -67,20 +70,45 @@ Das erspart Fehlversuche, die sonst erst nach Minuten Laufzeit auffallen.
 
 ## Voraussetzungen
 
-- **Windows** (siehe Einschränkungen)
 - Python 3.9 oder neuer — `ET.indent()` wird für die XML-Ausgabe verwendet
-- Tkinter (bei den offiziellen Windows-Installern enthalten)
-- Der [MadMax-Plotter](https://github.com/madMAx43v3r/chia-plotter) als
-  `chia_plot.exe`
+- Tkinter
+  - Windows: in den offiziellen Python-Installern enthalten
+  - Debian/Ubuntu: `sudo apt install python3-tk`
+  - Fedora: `sudo dnf install python3-tkinter`
+- Der [MadMax-Plotter](https://github.com/madMAx43v3r/chia-plotter)
+  (`chia_plot` bzw. `chia_plot.exe`)
 - Optional: Chia-Installation für Key-Erkennung und Plot-Prüfung
 
 Externe Python-Pakete werden nicht benötigt.
 
-## Verwendung
+## Start
+
+**Linux**
+
+```bash
+python3 Madmax_GUI_rev3.py
+```
+
+Oder direkt, da die Datei einen Shebang enthält:
+
+```bash
+chmod +x Madmax_GUI_rev3.py
+./Madmax_GUI_rev3.py
+```
+
+**Windows**
 
 ```
-python Madmax_GUI_rev2.py
+python Madmax_GUI_rev3.py
 ```
+
+Ein Doppelklick funktioniert ebenfalls, wenn `.py` mit Python verknüpft ist.
+
+> Wichtig: Die Datei ist ein Python-Programm, kein Shell-Skript. Ein Aufruf mit
+> `sh datei.py` oder `bash datei.py` scheitert mit Meldungen wie
+> `import: not found`.
+
+## Verwendung
 
 Typischer Ablauf beim ersten Start:
 
@@ -96,7 +124,7 @@ Typischer Ablauf beim ersten Start:
 ### Hinweise zu den Parametern
 
 **Temp 1** trägt die Hauptlast und sollte auf einer NVMe oder SSD liegen. Ein
-k32-Plot benötigt dort etwa 220 GB Schreibvolumen pro Durchgang. **Temp 2** kann
+k32-Plot erzeugt dort etwa 220 GB Schreibvolumen pro Durchgang. **Temp 2** kann
 auf einem anderen Laufwerk liegen, um die Last zu verteilen.
 
 **Threads** entspricht sinnvollerweise der Anzahl physischer Kerne. Mehr als das
@@ -109,30 +137,31 @@ Die GUI ruft MadMax bewusst mit `-n 1` auf und startet für jeden Plot einen
 eigenen Prozess. Das kostet minimal Zeit, ermöglicht aber sauberen Abbruch
 zwischen den Plots und eine Prüfung nach jedem einzelnen Plot.
 
-## Einschränkungen
+### Plattformunterschiede
 
-**Derzeit nur unter Windows lauffähig.** Das Programm erkennt zwar die
-Binärnamen betriebssystemabhängig, verwendet aber an drei Stellen
-`subprocess.STARTUPINFO()` zum Ausblenden von Konsolenfenstern. Diese Klasse
-existiert unter Linux und macOS nicht und führt dort zu einem `AttributeError`.
-Zusätzlich wandelt `normalize_path()` alle Pfadtrenner in Backslashes um.
+Pfade werden über `os.path.normpath` und `os.sep` normalisiert — Eingaben
+funktionieren also mit den Trennern des jeweiligen Systems. Das Ausblenden des
+Konsolenfensters greift nur unter Windows; unter Linux erzeugt der Plotter
+ohnehin kein eigenes Fenster.
 
-Für Linux-Unterstützung wären beide Stellen anzupassen — die Struktur des
-Programms gibt das ohne größere Umbauten her.
+Die Chia-Erkennung sucht unter Windows im Standard-Installationspfad der
+Chia-GUI, unter Linux in `~/.local/bin`, `/usr/local/bin`, `/usr/bin` sowie im
+venv einer Quellinstallation.
 
-**Weitere Punkte**
-- Die Berechnung „Mögliche Plots" geht fest von k32 aus und stimmt bei
-  anderen K-Größen nicht
+## Bekannte Einschränkungen
+
 - Der Fortschrittsbalken zählt fertige Plots, nicht den Fortschritt innerhalb
   eines Plots
-- Beim Stoppen wird `terminate()` verwendet; temporäre Dateien im Temp-Verzeichnis
-  bleiben unter Umständen liegen und sollten manuell entfernt werden
+- Beim Stoppen wird `terminate()` verwendet; temporäre Dateien im
+  Temp-Verzeichnis bleiben unter Umständen liegen und sollten manuell entfernt
+  werden
+- Die Plotgrößen für die Anzeige „Mögliche Plots" sind Näherungswerte
 
 ## Sicherheitshinweis
 
-Gespeicherte XML-Konfigurationen enthalten Farmer Key, Pool Public Key und
-Pool Contract Address im Klartext. Diese Werte sind öffentliche Schlüssel und
-kein Zugriff auf Guthaben — Vorsicht ist trotzdem angebracht, wenn du
+Gespeicherte XML-Konfigurationen enthalten Farmer Key, Pool Public Key und Pool
+Contract Address im Klartext. Diese Werte sind öffentliche Schlüssel und geben
+keinen Zugriff auf Guthaben — Vorsicht ist trotzdem angebracht, wenn du
 Konfigurationsdateien weitergibst oder in ein öffentliches Repository legst.
 
 Der Mnemonic beziehungsweise private Schlüssel wird vom Programm zu keinem
